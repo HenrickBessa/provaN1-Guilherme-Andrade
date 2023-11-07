@@ -1,22 +1,24 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'state_machine.dart';
 import 'package:flutter/material.dart';
-import 'package:quiztemp/quiz_brain.dart';
 
 void main() {
-  runApp(const Quiz());
+  runApp(const DiabetesHelper());
 }
 
-class Quiz extends StatelessWidget {
-  const Quiz({super.key});
+class DiabetesHelper extends StatelessWidget {
+  const DiabetesHelper({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: Colors.grey.shade900,
+        backgroundColor: Color.fromARGB(255, 33, 33, 33),
         body: const SafeArea(
           child: Padding(
-            padding: EdgeInsets.all(10),
-            child: QuizPage(),
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: DiabetesHelperPage(),
           ),
         ),
       ),
@@ -24,16 +26,15 @@ class Quiz extends StatelessWidget {
   }
 }
 
-class QuizPage extends StatefulWidget {
-  const QuizPage({super.key});
+class DiabetesHelperPage extends StatefulWidget {
+  const DiabetesHelperPage({super.key});
 
   @override
-  State<QuizPage> createState() => _QuizPageState();
+  State<DiabetesHelperPage> createState() => _DiabetesHelperPageState();
 }
 
-class _QuizPageState extends State<QuizPage> {
-  List<Icon> score = [];
-  QuizBrain quizBrain = QuizBrain();
+class _DiabetesHelperPageState extends State<DiabetesHelperPage> {
+  StateMachine stateMachine = StateMachine();
 
   @override
   Widget build(BuildContext context) {
@@ -44,12 +45,12 @@ class _QuizPageState extends State<QuizPage> {
         Expanded(
           flex: 5,
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                quizBrain.getQuestionText(),
+                stateMachine.getStateText(),
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 25.0,
                   color: Colors.white,
                 ),
@@ -62,16 +63,18 @@ class _QuizPageState extends State<QuizPage> {
             padding: const EdgeInsets.all(10.0),
             child: TextButton(
               style: TextButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.blue,
               ),
               onPressed: () {
-                checkAnswer(true);
+                setState(() {
+                  stateMachine.checkChoice(true);
+                });
               },
-              child: const Text(
-                'Verdadeiro',
+              child: Text(
+                stateMachine.getChoice1(),
                 style: TextStyle(
-                  fontSize: 20.0,
                   color: Colors.white,
+                  fontSize: 20.0,
                 ),
               ),
             ),
@@ -80,69 +83,29 @@ class _QuizPageState extends State<QuizPage> {
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(10.0),
-            child: TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.red,
-              ),
-              onPressed: () {
-                checkAnswer(false);
-              },
-              child: const Text(
-                'Falso',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  color: Colors.white,
+            child: Visibility(
+              visible: stateMachine.getChoice2() != null,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.red,
+                ),
+                onPressed: () {
+                  setState(() {
+                    stateMachine.checkChoice(false);
+                  });
+                },
+                child: Text(
+                  stateMachine.getChoice2() ?? '',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                  ),
                 ),
               ),
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Row(
-            children: score,
-          ),
-        )
       ],
     );
-  }
-
-  void checkAnswer(bool userAnswer) {
-    Icon resultIcon;
-
-    if (quizBrain.isChoiceCorrect(userAnswer)) {
-      resultIcon = const Icon(
-        Icons.check,
-        color: Colors.green,
-      );
-    } else {
-      resultIcon = const Icon(
-        Icons.close,
-        color: Colors.red,
-      );
-    }
-
-    setState(() {
-      if (quizBrain.isFinished()) {
-        showDialog<String>(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-            title: const Text('Fim de Jogo!'),
-            content: const Text('Você chegou ao fim do jogo!'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.pop(context, 'OK'),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
-        quizBrain.reset();
-        score = [];
-      } else {
-        score.add(resultIcon);
-        quizBrain.nextQuestion();
-      }
-    });
   }
 }
