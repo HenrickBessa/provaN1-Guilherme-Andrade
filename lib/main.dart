@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+//envio imediato, sem nota na N1
 
 import 'state_machine.dart';
 import 'package:flutter/material.dart';
@@ -12,10 +12,10 @@ class DiabetesHelper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: Scaffold(
         backgroundColor: Color.fromARGB(255, 33, 33, 33),
-        body: const SafeArea(
+        body: SafeArea(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.0),
             child: DiabetesHelperPage(),
@@ -45,12 +45,12 @@ class _DiabetesHelperPageState extends State<DiabetesHelperPage> {
         Expanded(
           flex: 5,
           child: Padding(
-            padding: EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(10.0),
             child: Center(
               child: Text(
                 stateMachine.getStateText(),
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 25.0,
                   color: Colors.white,
                 ),
@@ -72,7 +72,7 @@ class _DiabetesHelperPageState extends State<DiabetesHelperPage> {
               },
               child: Text(
                 stateMachine.getChoice1(),
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20.0,
                 ),
@@ -96,7 +96,7 @@ class _DiabetesHelperPageState extends State<DiabetesHelperPage> {
                 },
                 child: Text(
                   stateMachine.getChoice2() ?? '',
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20.0,
                   ),
